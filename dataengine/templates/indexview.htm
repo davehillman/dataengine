@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<title>Data Engine -- Data Viewer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{url_for('static', filename='js/jquery-3.6.0.min.js')}}"></script>
+
+<link href="{{url_for('static', filename='tabltr/css/tabulator.min.css')}}" rel="stylesheet">
+<script src="{{url_for('static', filename='tabltr/js/tabulator.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/moment.js')}}"></script>
+<script src="{{url_for('static', filename='tabltr/js/modules/edit.js')}}"></script>
+<script src="{{url_for('static', filename='tabltr/js/modules/filter.js')}}"></script>
+<link href="{{url_for('static',filename='css/w3.css')}}" rel="stylesheet">
+
+
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+</style>
+<body class="w3-light-grey">
+  {% block content %}
+<!-- Top container -->
+<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+  <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i> &nbsp;Menu</button>
+  <span class="w3-bar-item w3-right">Data Engine</span>
+</div>
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:200px;" id="mySidebar"><br>
+  <div class="w3-bar-block">
+    {% include "indexmenu.htm" %}
+  </div>
+</nav>
+
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+
+
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+  <!-- Header -->
+  <header class="w3-container" style="padding-top:12px">
+    <h5><b><i class="fa fa-dashboard"></i>Data Viewer</b></h5><hr>
+  </header>
+
+Data Sets: <select class="custom-select" id="dslist" > 
+  <option value = 0>Select DataSet</option>
+</select>
+
+<input id="filter-show" type="button" value="Filter">
+<div id="filtertools" style="visibility:hidden">
+  Filter: <select id="filter-field">
+    <option></option>
+
+  </select>
+
+  <select id="filter-type">
+    <option value="=">=</option>
+    <option value="<"><</option>
+    <option value="<="><=</option>
+    <option value=">">></option>
+    <option value=">=">>=</option>
+    <option value="!=">!=</option>
+    <option value="like">like</option>
+  </select>
+
+  <input id="filter-value" type="text" placeholder="value to filter">
+
+  <input id="filter-clear" type="button" value="Clear Filter">
+
+</div>
+
+
+
+<div id="tinstruct" style="visibility:hidden">
+Click row to copy data into Edit table below...
+</div>
+  <div id="tab-table"></div>
+ 
+    <hr>
+  
+
+  <div class="w3-container">
+    <h5>Edit...</h5>
+    <div id="tab-table2"></div>
+    <button id="btnaddnew" style="visibility:hidden">New/Add Row</button>  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="btnupdate" style="visibility:hidden">Update</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="btndelete" style="visibility:hidden">Delete Rows</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="btnclear" style="visibility:hidden">Clear</button>
+
+  </div>
+
+
+
+
+  <!-- End page content -->
+</div>
+
+</body>
+<script>
+
+commonpath = '{{ cpath[0]|safe }}'
+
+</script>
+
+<script src="{{url_for('static', filename='working/dataeng.js')}}"></script>
+
+<script>
+
+// following loads the select list with the device ids
+$(document).ready(function() {
+  $.ajax({
+    type:'POST',
+    url: commonpath + '/getds',
+    data: "",
+    async: true,
+    success: function(data){
+      dslist = JSON.parse(data);
+      for (i=0;i<dslist.length;i++) {
+        var option = new Option();
+        option.value = dslist[i][0]
+        option.text = dslist[i][1]
+        $('#dslist').append(option);
+      }
+    },
+    error: function(error){
+      console.log(JSON.stringify(error))
+    }
+  })
+})
+
+var cdid = 0
+var crid = 0
+
+function loadset(did,last) {
+  tabledec.clearData()
+  if (did != 0) {
+    $.ajax({
+      type:'GET',
+      url: commonpath + '/getdata',
+      data: {did: did},
+      async: true,
+      success: function(data){
+        dslist = JSON.parse(data);
+        tabledec.setData(dslist)
+        tabledec.hideColumn("__rid__")
+        tabledecedit.clearData()
+        tabledecedit.setData(dslist)
+        tabledecedit.hideColumn("__rid__")
+        tabledecedit.clearData()
+        document.getElementById("btnaddnew").style = "show";
+        document.getElementById("tinstruct").style = "show";
+        setFilter();
+      },
+      error: function(error){
+        console.log(JSON.stringify(error))
+      }
+    })  
+  }
+}
+
+$('#filter-show').on('click',function(e) {
+  setFilter()
+  $("#filtertools").style ="show";
+  document.getElementById("filtertools").style.visibility = "visible";
+
+})
+
+function setFilter () {
+  $("#filter-field").empty();
+  var opt = '<option></option>';
+  for (i=1;i<tabledec.getColumnDefinitions().length;i++) {
+    opt += '<option>' + tabledec.getColumnDefinitions()[i]["field"] + '</option>'
+  }
+  $("#filter-field").append(opt)
+}
+
+
+
+// following uses the dataset id to query and get data set for the table
+$('#dslist').on('change',function(e){
+  did = this.value
+  cdid = did
+  loadset(did)
+})
+
+$('#btnupdate').on('click',function(e){
+  did = cdid
+  dset = JSON.stringify(tabledecedit.getData())
+  if (did != 0) {
+    $.ajax({
+      type:'POST',
+      url: commonpath + '/upddata',
+      data: {did: did, dset: dset},
+      async: true,
+      success: function(data){
+        loadset(did)
+      },
+      error: function(error){
+        console.log(JSON.stringify(error))
+      }
+    })  
+  }
+})
+
+$('#btndelete').on('click',function(e){
+  did = cdid
+  dset = JSON.stringify(tabledecedit.getData())
+  if (did != 0) {
+    $.ajax({
+      type:'POST',
+      url: commonpath + '/deldata',
+      data: {did: did, dset: dset},
+      async: true,
+      success: function(data){
+        loadset(did)
+      },
+      error: function(error){
+        console.log(JSON.stringify(error))
+      }
+    })  
+  }
+})
+
+$('#btnaddnew').on('click',function(e){
+  did = cdid
+  if (did != 0) {
+// use following to add 'new' record
+    clist = {__rid__:0}
+    for (i=1;i<tabledec.getColumnLayout().length;i++) {
+      var d = {}
+      var item = tabledec.getColumnLayout()[i]["field"]
+      console.log(item)
+      vv = 0
+      if (i>0) {vv = ""}
+      clist[item] = vv
+    }
+    tabledecedit.addData(clist,true)
+    tabledecedit.redraw(true)
+    document.getElementById("btnupdate").style = "show";
+    document.getElementById("btndelete").style = "show";
+  }
+  else {alert("Select a Dataset")}
+})
+
+
+$('#btnclear').on('click',function(e){
+    tabledecedit.clearData()
+    document.getElementById("btnupdate").style.display = "none";
+    document.getElementById("btndelete").style.display = "none";
+    document.getElementById("btnclear").style.display = "none";
+})
+
+
+</script>
+
+{% include "indexsidemenu.htm" %}
+
+
+{% endblock %}
+
+</html>

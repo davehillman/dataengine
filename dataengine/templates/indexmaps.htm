@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>Path Maker Demonstration</title>
+<link href="site.css" rel="STYLESHEET" type="text/css">
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBJstx7MhYGbmBplTEGY2rOS40sKyAKU0I&libraries=drawing"></script>
+
+<link href="{{url_for('static',filename='css/w3.css')}}" rel="stylesheet">
+
+
+  <style type="text/css">
+    html, body
+  {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+  }
+  .map{height:80%;}
+ </style> 
+
+<script type='text/javascript' src="{{url_for('static', filename='working/pmscript.js')}}"></script>
+
+  
+</head>
+
+<body>
+  <div class="map" id="map_in"></div>
+<div>
+  <br />&nbsp;&nbsp; Lat/Long <input id="llpos" value="" style="width:30%"/>
+  <br /> &nbsp;&nbsp;<input id="clear_shapes" value="Clear Objects"    type="button"  />
+  &nbsp;&nbsp;<input id="save_raw" value="SAVE Objects" type="button" />
+	&nbsp;&nbsp;<input id="restore" value="Restore Objects" type="button" />
+  &nbsp;&nbsp; Path ID: <input id="pathid" value="" style="width:20%"/>
+  &nbsp;&nbsp; Path Name: <input id="pathname" value="" style="width:20%"/>
+  <br />&nbsp;&nbsp;Path Data: <input id="data" value="" style="width:40%"/>
+    &nbsp;&nbsp;<input id="mapCopy" value="CC" type="button" />
+	&nbsp;&nbsp;<input id="dataClear" value="Clear" type="button" />
+  
+  <br />&nbsp;&nbsp;<b>Object Data</b>&nbsp;&nbsp; ObjectID: <input id="obid" value="" style="width:20%"/>	
+	&nbsp;&nbsp; Object Type: <input id="obtype" value="" style="width:20%"/>	
+  <br />&nbsp;&nbsp; Date: <input id="obdate" value="" style="width:20%"/>
+  &nbsp;&nbsp; Message: <input id="obmsg" value="" style="width:40%"/>	
+  &nbsp;&nbsp;<input id="upd_msg" value="Update Message" type="button" />
+  <br />&nbsp;&nbsp;<b>Special Functions:</b>&nbsp;&nbsp; <input id="link_markers" value="Link Markers" type="button" />
+  
+  <br /><br />&nbsp;&nbsp; Status: <input id="status" value="" style="width:70%"/>	
+</div>
+
+<div>
+<hr>
+  <input id="GetmapCopy" value="Transfer" type="button">  
+Sample Data:<p> </p><textarea id='tsample' rows="3" cols="60">
+[{"type":"PATH","pathid":"4ed3949a-500f-4c58-be57-a33bfffce361","pathname":"Europe","maplat":41.95502868936744,"maplong":-4.304692496118747,"mapzoom":3,"maptype":"terrain"},{"type":"MARKER","mydt":"3/3/2019 14:11:37","mymsg":"initial creation","myid":"c4669c84-86ac-45c2-8628-945875087e10","geometry":[41.58733687646445,-5.974614371118719]},{"type":"MARKER","mydt":"3/3/2019 14:11:38","mymsg":"initial creation","myid":"a455b767-ed4c-41d3-8a60-cd6d3de7734d","geometry":[49.45083525771912,3.1660106288812813]},{"type":"MARKER","mydt":"3/3/2019 14:11:40","mymsg":"initial creation","myid":"a1861ea1-08bd-4369-ac02-fee860b3d007","geometry":[53.393673610676274,18.28319812888128]},{"type":"MARKER","mydt":"3/3/2019 14:11:41","mymsg":"initial creation","myid":"74bf41a7-881b-4456-b548-2ef3b0b08dc6","geometry":[55.33901096379796,29.70897937888128]},{"type":"MARKER","mydt":"3/3/2019 14:11:44","mymsg":"initial creation","myid":"ec133c6f-35de-4629-966a-a8419003705a","geometry":[57.00233102397687,48.51757312888128]},{"type":"POLYLINE","mydt":"3/3/2019 14:11:47","mymsg":"via linking","myid":"2fc00058-9e03-4491-a2b0-a2fb5a1dcd92","geometry":[[41.58733687646445,-5.974614371118719],[49.45083525771912,3.1660106288812813],[53.393673610676274,18.28319812888128],[55.33901096379796,29.70897937888128],[57.00233102397687,48.51757312888128]]},{"type":"CIRCLE","mydt":"3/3/2019 14:11:55","mymsg":"initial creation","myid":"92ffcdb7-3e33-4b6c-9b2c-4382bb79bd4c","radius":726603.9726257859,"geometry":[43.78361861626115,-12.126958121118719]},{"type":"RECTANGLE","mydt":"3/3/2019 14:11:59","mymsg":"initial creation","myid":"0aed6d7e-5de6-4804-b5cb-8266718f3931","geometry":[[53.60279915537488,43.59569812888128],[61.32077738631134,57.13085437888128]]}]
+</textarea>
+
+</div>
+  
+
+
+</body>
+
+</html>

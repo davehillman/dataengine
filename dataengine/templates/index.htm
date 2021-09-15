@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<title>Data Engine - Home</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{url_for('static', filename='js/jquery-3.6.0.min.js')}}"></script>
+
+<link href="{{url_for('static',filename='css/w3.css')}}" rel="stylesheet">
+
+
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+</style>
+<body class="w3-light-grey">
+  {% block content %}
+<!-- Top container -->
+<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+  <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i> &nbsp;Menu</button>
+  <span class="w3-bar-item w3-right">Data Engine</span>
+</div>
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:200px;" id="mySidebar"><br>
+
+  <div class="w3-bar-block">
+    {% include "indexmenu.htm" %}
+  </div>
+</nav>
+
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+
+
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+  <!-- Header -->
+  <header class="w3-container" style="padding-top:12px">
+    <h5><b><i class="fa fa-dashboard"></i>About</b></h5><hr>
+  </header>
+
+
+  <div class="w3-container">
+
+<p>This application illustrates a data model and demo capability.
+</p>
+<p>
+  <b>The demo capabilities include:</b>
+</p>
+<p>
+  1.  Data Viewer: basic functionality for a data model based on simulating key:value using a relation database system.
+</p>
+<p>
+  2.  Data Commenter: Variation focused on a user capability to comment as desired.
+</p>
+<p>
+  3.  Graphs: Examples of graphing tools.
+</p>
+<p>
+  4.  Files: Examples of acessing and displaying file-based information.
+</p>
+
+<p>
+  5.  Maps: Using markers and graphics to annotate maps (Google Maps).  
+  Please note: this appliation will open in a new tab due to the way that Google Maps interacts with the browser.
+</p>
+
+  </div>
+  <hr>
+
+
+  <!-- End page content -->
+</div>
+
+</body>
+
+{% include "indexsidemenu.htm" %}
+
+
+{% endblock %}
+
+</html>

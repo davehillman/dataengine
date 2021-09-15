@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<title>Data Engine - Graphs</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../static/css/w3.css">
+<script src="{{url_for('static', filename='js/chart.js')}}"></script>
+<script src="{{url_for('static', filename='js/jquery-3.6.0.min.js')}}"></script>
+
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+</style>
+<body class="w3-light-grey">
+
+<!-- Top container -->
+<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+  <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i> &nbsp;Menu</button>
+  <span class="w3-bar-item w3-right">Data Engine</span>
+</div>
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:200px;" id="mySidebar"><br>
+
+  <div class="w3-bar-block">
+    {% include "indexmenu.htm" %}
+  </div>
+</nav>
+
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+  <!-- Header -->
+  <header class="w3-container" style="padding-top:12px">
+    <h5><b><i class="fa fa-dashboard"></i>Graphs</b></h5><hr>
+  </header>
+
+  <div class="w3-container">
+    <h5>Graph Example 1 ( Bar chart generated from CSV on server)</h5>
+  </div>
+  <div style="height:400px;width:600px">
+    <canvas id="myChart" ></canvas>
+</div>
+<script>
+  commonpath = '{{ cpath[0]|safe }}'
+   
+   var randomColorGenerator = function () { 
+       return '#' + (Math.random().toString(16) + '0000000').slice(2, 8); 
+   };
+   
+</script>
+
+<script>
+  barlabels = []
+  barbackcolor = []
+  barbordercolor = []
+
+  function getbarchart() {
+    dslist = []
+     $.ajax({
+       type:'POST',
+       url: commonpath + '/getbarchart',
+       data: "",
+       async: false,
+       success: function(data){
+         cset = JSON.parse(data);
+         for (i=0;i<cset.length;i++) {
+          dslist.push(cset[i])
+          barlabels.push("Item " + (i+1))
+          barbackcolor.push(randomColorGenerator())
+          barbordercolor.push(randomColorGenerator())
+         }
+       },
+       error: function(error){
+       }
+     })
+     return dslist
+   }
+
+var ctx = document.getElementById('myChart');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+
+    data: {
+        labels: barlabels,
+        datasets: [
+          {
+            label: '# of Items',
+            data:  getbarchart(),
+            backgroundColor: barbackcolor,
+            borderColor: barbordercolor,
+            borderWidth: 1
+        }
+      ]
+    },
+    options: {
+		maintainAspectRatio: false,
+		responsive:true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+
+ 
+  
+   
+  </script>
+
+
+
+  <div class="w3-container">
+    <h5>Graph Example 2 (Line chart generated from CSV on server)</h5>
+  </div>
+
+<div style="height:400px;width:600px">
+    <canvas id="myChart2" ></canvas>
+</div>
+
+<script>
+
+linedata = []
+
+  function getlinechart() {
+    dslist = []
+     $.ajax({
+       type:'POST',
+       url: commonpath + '/getlinechart',
+       data: "",
+       async: false,
+       success: function(data){
+         dslist = JSON.parse(data);
+       },
+       error: function(error){
+       }
+     })
+     return dslist
+   }
+
+linedata = getlinechart()
+
+var ctx2 = document.getElementById('myChart2');
+var myChart2 = new Chart(ctx2, {
+	  type: 'line',
+      data: {
+		  labels: linedata[0],
+			datasets: [{
+				label: 'Dataset 1',
+				data: linedata[1],
+				fill: false,
+				borderColor: 'rgb(75, 192, 192)',
+				tension: 0.1
+				},
+				{
+				label: 'Dataset 2',
+				data: linedata[2],
+				fill: false,
+				borderColor: 'rgb(175, 92, 92)',
+				tension: 0.1
+				
+				}
+				]
+		},
+    options: {
+		maintainAspectRatio: false,
+		responsive:true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }	  
+	});
+
+
+
+</script>
+
+
+  <div class="w3-container">
+    <h5>Graph Example 3 (Scatter chart generated from local function) </h5>
+  </div>
+
+<div style="height:400px;width:600px">
+    <canvas id="myChart3" ></canvas>
+</div>
+
+<script>
+
+
+function getsdata(cnt) {
+	dset = []
+	for (i=0;i<cnt;i++) {
+		xval = Math.floor(Math.random() * 100)
+		yval = Math.floor(Math.random() * 100)
+		var dict = {
+			"x": xval,
+		    "y": yval
+		}
+		dset.push(dict)
+		}
+	return dset
+}
+
+var ctx3 = document.getElementById('myChart3');
+var myChart3 = new Chart(ctx3, {
+	type: 'scatter',
+  data: {
+    datasets: [{
+      label: 'Dataset 1',
+      borderColor: 'rgb(0, 0, 255)',
+      backgroundColor: 'rgb(0, 0, 255)',	
+      data: getsdata(200)
+
+    },
+    {
+      label: 'Dataset 2',
+      borderColor: 'rgb(255, 0, 0)',
+      backgroundColor: 'rgb(255, 0, 0)',	
+      data: getsdata(100)
+
+    }]
+  },  
+  options: {
+	maintainAspectRatio: false,
+	responsive:true,
+    scales: {
+      x: {
+        type: 'linear',
+        position: 'bottom'
+      }
+    }
+  }
+	});
+
+
+
+</script>
+
+
+
+
+
+  <!-- End page content -->
+</div>
+
+{% include "indexsidemenu.htm" %}
+
+
+
+</body>
+</html>
